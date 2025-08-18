@@ -59,5 +59,13 @@ node index.js https://www.google.com -o google.html
 node index.js --proxy http://localhost:8080 https://httpbin.org/get
 ```
 
+## 技術ノート (Technical Notes)
+
+### プロキシ実装について
+
+当初、HTTP(S)プロキシ機能の実装には `https-proxy-agent` ライブラリの利用を検討しました。しかし、このライブラリはNode.jsの標準的な `http.Agent` を対象としており、`ky` が内部で利用するHTTPクライアント `undici` の `dispatcher` 機構とは互換性がないことが判明しました。
+
+この問題を解決するため、`undici` にネイティブで提供されている `ProxyAgent` を直接利用する方針に切り替えました。`ProxyAgent` のインスタンスを `ky` の `dispatcher` オプションに渡すことで、プロキシ機能が正しく動作することを確認しています。
+
 ---
 このプロジェクトは、[GoogleのGemini CLI](https://gemini.google.com/)の協力を受けて開発されました。
