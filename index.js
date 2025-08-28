@@ -11,10 +11,15 @@ program
   .argument('<url>', 'URL to fetch')
   .option('-o, --output <file>', 'Write to file instead of stdout')
   .option('-p, --proxy <proxy_url>', 'Proxy URL (e.g. http://proxy.example.com:8080)')
+  .option('-H, --head', 'Perform a HEAD request')
   .action(async (url, options) => {
     const proxyUrl = options.proxy || process.env.HTTP_PROXY || process.env.HTTPS_PROXY;
 
     const kyOptions = {};
+
+    if (options.head) {
+      kyOptions.method = 'head';
+    }
 
     if (proxyUrl) {
       console.error(`Using proxy: ${proxyUrl}`);
@@ -23,6 +28,15 @@ program
 
     try {
       const response = await ky(url, kyOptions);
+
+      if (options.head) {
+        console.log(`HTTP/${response.httpVersion} ${response.status} ${response.statusText}`);
+        for (const [key, value] of response.headers.entries()) {
+          console.log(`${key}: ${value}`);
+        }
+        return;
+      }
+
       const body = await response.text();
 
       if (options.output) {
