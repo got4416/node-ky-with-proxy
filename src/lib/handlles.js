@@ -68,7 +68,8 @@ const handleHead = async (url, options) => {
     const customKy = createKyInstance(options);
     try {
         const response = await customKy.head(url);
-        console.log(`HTTP/${response.httpVersion} ${response.status} ${response.statusText}`);
+        // kyのResponseオブジェクトはhttpVersionプロパティを持たないため、表示を簡略化
+        console.log(`HTTP ${response.status} ${response.statusText}`);
         for (const [key, value] of response.headers.entries()) {
             console.log(`${key}: ${value}`);
         }
